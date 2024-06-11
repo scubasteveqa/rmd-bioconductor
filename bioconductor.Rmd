@@ -1,0 +1,41 @@
+---
+title: "Bioconductor Example"
+author: "Your Name"
+format: html
+---
+
+```{r setup, include=FALSE}
+# Load the necessary packages
+library(BiocManager)
+BiocManager::install(c("BiocGenerics", "GenomicRanges", "SummarizedExperiment"))
+
+library(BiocGenerics)
+library(GenomicRanges)
+library(SummarizedExperiment)
+```
+
+```{r}
+# Create a GRanges object
+gr <- GRanges(seqnames = Rle(c("chr1", "chr2"), c(2, 2)),
+              ranges = IRanges(1:4, width = 10),
+              strand = Rle(strand(c("+", "-", "+", "-"))),
+              score = 1:4,
+              GC = c(0.1, 0.2, 0.3, 0.4))
+
+# Display the GRanges object
+gr
+```
+
+
+```{r}
+# Create a SummarizedExperiment object
+counts <- matrix(1:12, nrow = 3, ncol = 4)
+colData <- DataFrame(Treatment = c("ChIP", "Input", "ChIP", "Input"),
+                     row.names = c("Sample1", "Sample2", "Sample3", "Sample4"))
+
+se <- SummarizedExperiment(assays = list(counts = counts),
+                           colData = colData)
+
+# Display the SummarizedExperiment object
+se
+```
