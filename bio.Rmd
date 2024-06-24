@@ -1,0 +1,55 @@
+---
+title: "Bioconductor RMD"
+author: "Steve"
+---
+
+```{r setup, include=FALSE}
+# Load the necessary packages
+library(BiocManager)
+library(BiocGenerics)
+library(GenomicRanges)
+library(SummarizedExperiment)
+library(edgeR)
+library(limma)
+```
+
+```{r}
+# Create a GRanges object
+gr <- GRanges(seqnames = Rle(c("chr1", "chr2"), c(2, 2)),
+              ranges = IRanges(1:4, width = 10),
+              strand = Rle(strand(c("+", "-", "+", "-"))),
+              score = 1:4,
+              GC = c(0.1, 0.2, 0.3, 0.4))
+
+# Display the GRanges object
+gr
+```
+
+```{r}
+# Create a SummarizedExperiment object
+counts <- matrix(1:12, nrow = 3, ncol = 4)
+colData <- DataFrame(Treatment = c("ChIP", "Input", "ChIP", "Input"),
+                     row.names = c("Sample1", "Sample2", "Sample3", "Sample4"))
+
+se <- SummarizedExperiment(assays = list(counts = counts),
+                           colData = colData)
+
+# Display the SummarizedExperiment object
+se
+```
+
+```{r}
+# Example count matrix
+countData <- matrix(rpois(50, lambda=10), ncol=5)
+group <- factor(c("Control", "Control", "Control", "Treatment", "Treatment"))
+y <- DGEList(counts=countData, group=group)
+y <- calcNormFactors(y)
+design <- model.matrix(~group)
+y <- estimateDisp(y, design)
+fit <- glmQLFit(y, design)
+qlf <- glmQLFTest(fit, coef=2)
+
+# Display top tags
+topTags(qlf)
+```
+
